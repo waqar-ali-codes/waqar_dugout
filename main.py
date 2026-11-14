@@ -27,6 +27,17 @@ class FantasyTeam:
         for player in self.players:
             total = total + player.credits
         return total
+    
+    def count_by_role(self):
+        counts = {
+            "WK":0,
+            "BAT":0,
+            "AR":0,
+            "BOWL":0
+        }
+        for player in self.players:
+            counts[player.role] = counts[player.role] + 1
+        return counts
 
 
 # def __str__(self):
