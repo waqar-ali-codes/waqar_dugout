@@ -18,10 +18,16 @@ class FantasyTeam:
         self.player = []
         self.captain = None
         self.vice_captain = None
-        
+    
     def add_player(self,player):
         self.players.append(player)
-print(FantasyTeam)
+    
+    def total_credits(self):
+        total = 0
+        for player in self.players:
+            total = total + player.credits
+        return total
+
 
 # def __str__(self):
 #     return (
