@@ -7,9 +7,22 @@ class Player:
         self.franchise = franchise
         self.credits = credits
 
-
     def __str__(self):
         return f"{self.name} ({self.franchise}, {self.role},{self.credits} cr)"
+
+
+class FantasyTeam:
+    def __inti__(self, team_name, owner):
+        self.team_name = team_name
+        self.owner = owner
+        self.player = []
+        self.captain = None
+        self.vice_captain = None
+        
+    def add_player(self,player):
+        self.players.append(player)
+print(FantasyTeam)
+
 # def __str__(self):
 #     return (
 #         f"Player Id : {self.player_id}\n",
@@ -27,18 +40,20 @@ babar = Player("P089", "Babar Azam", "Batter", "Peshawer Zalmi", 10.5)
 # print(babar.credits)
 rizwan = Player("P122", "Mohammad Rizwan", "Wk", "Rawal pindiz", 10.5)
 # print(rizwan)
-class Player:
-    #constructor 
-    def __init__(self, player_id, name, role, franchise, credits):
-        self.player_id = player_id
-        self.name = name
-        self.role = role
-        self.franchise = franchise
-        self.credits = credits
+# class Player:
+#     #constructor 
+#     def __init__(self, player_id, name, role, franchise, credits):
+#         self.player_id = player_id
+#         self.name = name
+#         self.role = role
+#         self.franchise = franchise
+#         self.credits = credits
 
-    def __str__(self):
-        return f"{self.name} ({self.franchise}, {self.role},{self.credits} cr)"
+#     def __str__(self):
+#         return f"{self.name} ({self.franchise}, {self.role},{self.credits} cr)"
 
+
+# print(FantasyTeam)
 # def __str__(self):
 #     return (
 #         f"Player Id : {self.player_id}\n",
