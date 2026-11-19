@@ -40,17 +40,67 @@ def load_players(path):
     return players
 
 
-def team_from_row(row, players):
-    """Return a FantasyTeam built from one row (a dict) of a teams CSV file.
-    The CSV stores player ids such as "P012;P089", so we use the players
-    dict to turn each id back into a real Player object.
-    """
-    team = FantasyTeam(row["team_name"], row["owner"])
-    for player_id in row["players"].split(";"):
-        team.add_player(players[player_id.strip()])
 
-    team.set_captain(players[row["captain"]], players[row["vice_captain"]])
+def team_from_row(row, players):
+    """Create a FantasyTeam from a CSV row with data validation."""
+
+    # Clean team name and owner
+    team_name = (row.get("team_name") or "").strip()
+    owner = (row.get("owner") or "").strip()
+
+    if not team_name:
+        raise ValueError("Team name is missing in CSV file")
+
+    if not owner:
+        raise ValueError("Team owner is missing in CSV file")
+
+    # Create fantasy team
+    team = FantasyTeam(team_name, owner)
+
+    # Read and clean player IDs
+    player_ids = (row.get("players") or "").split(";")
+
+    for player_id in player_ids:
+        player_id = player_id.strip()
+
+        if not player_id:
+            continue
+
+        # Check whether player ID exists
+        player = players.get(player_id)
+
+        if player is None:
+            raise ValueError(
+                f"Player ID {player_id} not found in players.csv"
+            )
+
+        team.add_player(player)
+
+    # Read captain and vice-captain IDs
+    captain_id = (row.get("captain") or "").strip()
+    vice_captain_id = (row.get("vice_captain") or "").strip()
+
+    # Validate captain ID
+    captain = players.get(captain_id)
+
+    if captain is None:
+        raise ValueError(
+            f"Captain ID {captain_id} not found in players.csv"
+        )
+
+    # Validate vice-captain ID
+    vice_captain = players.get(vice_captain_id)
+
+    if vice_captain is None:
+        raise ValueError(
+            f"Vice-captain ID {vice_captain_id} not found in players.csv"
+        )
+
+    # Assign captain and vice-captain
+    team.set_captain(captain, vice_captain)
+
     return team
+
 
 def load_team(path, players):
     # Return the first team in a teams CSV file, or None if the file has no teams.
