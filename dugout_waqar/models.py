@@ -48,6 +48,12 @@ class FantasyTeam:
             total = total + player.credits
         return total
     
+    
+    def remaining_credits(self):
+        """Return the credits remaining from the maximum team budget."""
+        return 100 - self.total_credits()
+
+    
     def count_by_role(self):
         counts = {
             "WK":0,
