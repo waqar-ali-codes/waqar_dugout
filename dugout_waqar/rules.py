@@ -37,18 +37,28 @@ def check_franchise_limit(team):
     return errors
 
 
+
 def check_roles(team):
-    """Each role must have between its minimum and maximum number of players."""
-    counts = team.count_by_role()
+    """Each valid role must have between its minimum and maximum players."""
+    counts = {role: 0 for role in ROLE_LIMITS}
+
+    for player in team.players:
+        if player.role in counts:
+            counts[player.role] += 1
+
     errors = []
+
     for role, (low, high) in ROLE_LIMITS.items():
         count = counts[role]
+
         if count < low or count > high:
             errors.append(
                 f"Team has {count} players with role {role}, "
                 f"but must have between {low} and {high}"
             )
+
     return errors
+
 
 def check_captains(team):
     """Captain and vice-captain must be chosen, be in the team, and be different."""
@@ -78,5 +88,18 @@ def check_no_duplicates(team):
             )
         else:
             seen_players.add(player.player_id)
+
+    return errors
+
+
+def check_valid_roles(team):
+    """Every player must have a valid role."""
+    errors = []
+
+    for player in team.players:
+        if player.role not in ROLE_LIMITS:
+            errors.append(
+                f"Invalid player role: {player.role}"
+            )
 
     return errors

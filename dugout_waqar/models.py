@@ -5,6 +5,7 @@ from dugout_waqar.rules import (
     check_roles,
     check_captains,
     check_no_duplicates,
+    check_valid_roles,
 )
 
 class Player:
@@ -71,16 +72,19 @@ class FantasyTeam:
         return counts
     
     
+    
     def check_rules(self):
         """Return a list of rule violations. An empty list means the team is legal."""
         errors = []
         errors.extend(check_players_count(self))
         errors.extend(check_budget(self))
         errors.extend(check_franchise_limit(self))
+        errors.extend(check_no_duplicates(self))
+        errors.extend(check_valid_roles(self))
         errors.extend(check_roles(self))
         errors.extend(check_captains(self))
-        errors.extend(check_no_duplicates(self))
         return errors
+
 
     def __str__(self):
         size = len(self.players)
