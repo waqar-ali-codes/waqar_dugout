@@ -27,6 +27,7 @@ def main():
     players = load_players("data\\players.csv")
     show_pool(players)
     teams = load_teams("data\\sample_teams.csv", players)
+    my_team = load_team("data\\my_team.csv", players)
     legal = []
     illegal = []
     for team in teams:
@@ -47,6 +48,23 @@ def main():
     print("Illegal teams:")
     for team in illegal:
         print(f"  {team.team_name}")
+        
+    # Display personal fantasy team
+    print("\n========== MY FANTASY TEAM ==========")
+
+    show_team(my_team)
+
+    print(f"Remaining credits: {my_team.remaining_credits()}")
+
+    errors = my_team.check_rules()
+
+    if errors:
+        print("MY TEAM: ILLEGAL")
+        for error in errors:
+            print(f"  - {error}")
+    else:
+        print("MY TEAM: LEGAL")
+
 
 
 if __name__ == "__main__":
