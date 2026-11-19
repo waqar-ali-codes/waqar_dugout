@@ -49,9 +49,10 @@ class TestFantasyTeamValidation(unittest.TestCase):
         errors = team.check_rules()
 
         self.assertIn(
-            "Duplicate player found: P001",
+            "Duplicate player found: Player 1 (P001)",
             errors
         )
+        
 
     def test_same_captain_and_vice_captain(self):
         """Captain and vice-captain must be different players."""

@@ -1,4 +1,5 @@
 from dugout_waqar.loader import load_players , load_team , load_teams
+from dugout_waqar.models import FantasyTeam , League
 
 def show_pool(players):
     """Print how many players there are per franchise and per role."""
@@ -23,11 +24,146 @@ def show_team(team):
     print(f"Total credits: {team.total_credits()}")
     print(f"Captain: {team.captain.name}, Vice-captain: {team.vice_captain.name}")
 
+
+def create_custom_test_teams(my_team):
+    """Create two custom teams with separate rule violations."""
+
+    # Test Team 1: Duplicate player
+    duplicate_team = FantasyTeam(
+        "Custom Test Team 1",
+        "Custom Test Owner 1"
+    )
+
+    for player in my_team.players:
+        duplicate_team.add_player(player)
+
+    duplicate_pair_found = False
+
+    # Find two non-captain players with the same role.
+    # The duplicate player's credits must not exceed
+    # the player being replaced.
+    for duplicate_player in duplicate_team.players:
+        if duplicate_player in (
+            my_team.captain,
+            my_team.vice_captain
+        ):
+            continue
+
+        for replaced_player in duplicate_team.players:
+            if replaced_player in (
+                my_team.captain,
+                my_team.vice_captain
+            ):
+                continue
+
+            if (
+                duplicate_player.role == replaced_player.role
+                and duplicate_player.player_id != replaced_player.player_id
+                and duplicate_player.credits <= replaced_player.credits
+            ):
+                duplicate_team.players.remove(replaced_player)
+                duplicate_team.add_player(duplicate_player)
+                duplicate_pair_found = True
+                break
+
+        if duplicate_pair_found:
+            break
+
+    if not duplicate_pair_found:
+        raise ValueError(
+            "Could not create a duplicate test team"
+        )
+
+    duplicate_team.set_captain(
+        my_team.captain,
+        my_team.vice_captain
+    )
+
+    # Test Team 2: Same captain and vice-captain
+    captain_team = FantasyTeam(
+        "Custom Test Team 2",
+        "Custom Test Owner 2"
+    )
+
+    for player in my_team.players:
+        captain_team.add_player(player)
+
+    captain_team.set_captain(
+        my_team.captain,
+        my_team.captain
+    )
+
+    return [duplicate_team, captain_team]
+
+
+def show_custom_test_teams(test_teams):
+    """Display custom test teams and their rule violations."""
+
+    print("\n========== CUSTOM TEST TEAMS ==========")
+
+    for team in test_teams:
+        print(f"\nTeam: {team.team_name}")
+
+        errors = team.check_rules()
+
+        if errors:
+            print("ILLEGAL:")
+            for error in errors:
+                print(f"  - {error}")
+        else:
+            print("LEGAL")
+
+
+
+def show_ranking_table(league):
+    """Display all fantasy teams from lowest to highest credits."""
+
+    ranked_teams = league.rank_teams()
+
+    print("\n========== FANTASY LEAGUE RANKINGS ==========")
+    print(
+        f"{'Rank':<6}"
+        f"{'Team Name':<25}"
+        f"{'Owner':<22}"
+        f"{'Credits':<10}"
+        f"{'Verdict'}"
+    )
+    print("-" * 75)
+
+    for rank, team in enumerate(ranked_teams, start=1):
+        errors = team.check_rules()
+        verdict = "ILLEGAL" if errors else "LEGAL"
+
+        print(
+            f"{rank:<6}"
+            f"{team.team_name:<25}"
+            f"{team.owner:<22}"
+            f"{team.total_credits():<10.1f}"
+            f"{verdict}"
+        )
+
+
+
 def main():
     players = load_players("data\\players.csv")
     show_pool(players)
     teams = load_teams("data\\sample_teams.csv", players)
     my_team = load_team("data\\my_team.csv", players)
+    test_teams = create_custom_test_teams(my_team)
+    show_custom_test_teams(test_teams)
+        # Create fantasy league
+    league = League("Pakistan Fantasy League")
+
+    # Add all six sample teams
+    for team in teams:
+        league.add_team(team)
+
+    # Add both custom test teams
+    for team in test_teams:
+        league.add_team(team)
+
+    # Add personal fantasy team
+    league.add_team(my_team)
     legal = []
     illegal = []
     for team in teams:
@@ -65,7 +201,8 @@ def main():
     else:
         print("MY TEAM: LEGAL")
 
-
+    # Display fantasy league ranking table
+    show_ranking_table(league)
 
 if __name__ == "__main__":
     main()

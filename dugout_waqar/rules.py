@@ -76,6 +76,7 @@ def check_captains(team):
     return errors
 
 
+
 def check_no_duplicates(team):
     """A team must not contain the same player more than once."""
     seen_players = set()
@@ -84,12 +85,13 @@ def check_no_duplicates(team):
     for player in team.players:
         if player.player_id in seen_players:
             errors.append(
-                f"Duplicate player found: {player.player_id}"
+                f"Duplicate player found: {player.name} ({player.player_id})"
             )
         else:
             seen_players.add(player.player_id)
 
     return errors
+
 
 
 def check_valid_roles(team):
