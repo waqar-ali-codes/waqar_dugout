@@ -1,15 +1,44 @@
 import csv
 from dugout_waqar.models import Player, FantasyTeam
 
+
 def load_players(path):
-    
+    """Load players from CSV and validate player records."""
     players = {}
-    
-    with open(path, newline="",encoding="utf-8") as f:
-        for row in csv.DictReader(f):
+
+    with open(path, newline="", encoding="utf-8") as file:
+        reader = csv.DictReader(file)
+
+        for row in reader:
+
+            # Remove unnecessary spaces from CSV values
+            row = {
+                key: value.strip() if value is not None else ""
+                for key, value in row.items()
+            }
+
+            # Check that player ID exists
+            player_id = row.get("player_id")
+
+            if not player_id:
+                raise ValueError(
+                    "Player ID is missing in CSV file"
+                )
+
+            # Check for duplicate player IDs
+            if player_id in players:
+                raise ValueError(
+                    f"Duplicate player ID found: {player_id}"
+                )
+
+            # Convert CSV row into Player object
             player = Player.form_row(row)
+
+            # Store player using unique ID
             players[player.player_id] = player
+
     return players
+
 
 def team_from_row(row, players):
     """Return a FantasyTeam built from one row (a dict) of a teams CSV file.
