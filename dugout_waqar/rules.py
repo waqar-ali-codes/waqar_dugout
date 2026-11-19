@@ -64,3 +64,19 @@ def check_captains(team):
     if team.captain == team.vice_captain:
         errors.append("Captain and vice-captain cannot be the same player")
     return errors
+
+
+def check_no_duplicates(team):
+    """A team must not contain the same player more than once."""
+    seen_players = set()
+    errors = []
+
+    for player in team.players:
+        if player.player_id in seen_players:
+            errors.append(
+                f"Duplicate player found: {player.player_id}"
+            )
+        else:
+            seen_players.add(player.player_id)
+
+    return errors
