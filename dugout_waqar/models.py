@@ -1,4 +1,11 @@
-from dugout_waqar.rules import (check_players_count,check_budget,check_franchise_limit,check_roles,check_captains)
+from dugout_waqar.rules import (
+    check_players_count,
+    check_budget,
+    check_franchise_limit,
+    check_roles,
+    check_captains,
+    check_no_duplicates,
+)
 
 class Player:
     #constructor 
@@ -72,6 +79,7 @@ class FantasyTeam:
         errors.extend(check_franchise_limit(self))
         errors.extend(check_roles(self))
         errors.extend(check_captains(self))
+        errors.extend(check_no_duplicates(self))
         return errors
 
     def __str__(self):
